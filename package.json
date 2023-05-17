@@ -1,0 +1,15 @@
+{
+    "name": "zendeskall",
+    "version": "1.0.0",
+    "description": "Zendesk SSO and End User Authentication for Zendesk Widget for Shopify and Guide",
+    "main": "server.js",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "http-proxy-middleware": "^2.0.6",
+        "jsonwebtoken": "^9.0.0",
+        "uuid": "^8.3.2"
+    }
+}
