@@ -2,7 +2,7 @@
 
 <header class="header">
   <div class="logo">
-  <a href="https://excitemy.com">
+  <a href="https://oceanpotion.com">
     <img src="{{settings.logo}}" alt="{{t 'home_page' name=help_center.name}}" />
     {{#if settings.show_brand_name}}
       <span aria-hidden="true">{{help_center.name}}</span>
@@ -15,7 +15,7 @@
     <nav class="user-nav" id="user-nav">
       <ul class="user-nav-list">
         <li>{{link 'home_page'}}</li>
-        <li><a href="https://help.excitemy.com/hc">Help Home</a></li>
+        <li><a href="https://help.oceanpotion.com/hc">Help Home</a></li>
         <li>{{link 'community'}}</li>
         <li>{{link 'new_request' class='submit-a-request'}}</li>
         {{#unless signed_in}}
@@ -102,7 +102,7 @@
 
 {{#if signed_in}}
 <script type="text/javascript">
- var WebAppName = "shopifyzendesk"; // !!!Replace with your main web app name!!!
+ var WebAppName = "shopifyzendeskop"; // !!!Replace with your main web app name!!!
   console.log("User Logged In");
 
   fetch('/api/v2/users/me.json')
