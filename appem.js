@@ -11,7 +11,7 @@ const sapUserName = process.env.SAP_USER_NAME;
 const sapPassword = process.env.SAP_PASSWORD;
 const sapCompanyDB = process.env.SAP_COMPANY_DB;
 const zendeskJwtSecret = process.env.ZENDESK_JWT_SECRET; //get this from zendesk
-const zendeskkeyid = process.env.ZENDESK_KEY_ID; //get this from zendesk
+const zendeskkeyid = process.env.ZENDESK_KEY_ID; //get this from zendesk //remember to activate new footer // and do gu and sso
 const shopifyurl = process.env.SHOPIFY_URL;
 
 
