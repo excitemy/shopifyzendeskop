@@ -40,6 +40,7 @@ router.get('/auth/:customerId', async (req, res) => {
       external_id: customer.id.toString(), // Convert the customer.id to a string
       phone: customer.phone,
       company_name: customer.company,
+      email_verified: "true"
     };
 
     const token = jwt.sign(jwtPayload, zendeskJwtSecret, jwtOptions);
