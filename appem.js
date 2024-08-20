@@ -12,8 +12,8 @@ const sapPassword = process.env.SAP_PASSWORD;
 const sapCompanyDB = process.env.SAP_COMPANY_DB;
 const zendeskJwtSecret = process.env.ZENDESK_JWT_SECRET; //get this from zendesk
 const zendeskkeyid = process.env.ZENDESK_KEY_ID; //get this from zendesk //remember to activate new footer // and do gu and sso
-const shopifyurl = process.env.SHOPIFY_URL;
-
+const shopifyurl = process.env.SHOPIFY_URL; //which ip addresses do we have to white label for azure web app
+const servicelayerurl = process.env.ServiceLayer_URL;
 
 router.get('/hello', (req, res) => {
   res.send('Hello, World!');
@@ -30,7 +30,7 @@ router.get('/auth/:customerId', async (req, res) => {
       CompanyDB: sapCompanyDB,
     };
 
-    const sapAuthResponse = await axios.post('https://${shopifyurl}:50000/b1s/v1/Login', sapAuthPayload, {
+    const sapAuthResponse = await axios.post('https://${servicelayerurl}:50000/b1s/v1/Login', sapAuthPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -39,7 +39,7 @@ router.get('/auth/:customerId', async (req, res) => {
     const sessionId = sapAuthResponse.data.SessionId; // Extract the SessionId from the response
 
     // Step 2: Make an authenticated request to SAP Business One Service Layer
-    const sapResponse = await axios.get(`https://${shopifyurl}:50000/b1s/v1/BusinessPartners('${customerId}')?$select=CardCode,CardName,ContactEmployees`, {
+    const sapResponse = await axios.get(`https://${servicelayerurl}:50000/b1s/v1/BusinessPartners('${customerId}')?$select=CardCode,CardName,ContactEmployees`, {
       headers: {
         'Content-Type': 'application/json',
         'Cookie': `B1SESSION=${sessionId};`, // Use the session ID in the Cookie header
