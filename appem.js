@@ -21,6 +21,7 @@ router.get('/hello', (req, res) => {
 
 router.get('/auth/:customerId', async (req, res) => {
   const customerId = req.params.customerId;
+  const customerEmail = req.query.email; // Extract the email from the query parameter
 
   try {
     // Step 1: Authenticate with SAP Business One Service Layer
@@ -30,7 +31,7 @@ router.get('/auth/:customerId', async (req, res) => {
       CompanyDB: sapCompanyDB,
     };
 
-    const sapAuthResponse = await axios.post('https://${servicelayerurl}:50000/b1s/v1/Login', sapAuthPayload, {
+    const sapAuthResponse = await axios.post(`https://${servicelayerurl}:50000/b1s/v1/Login`, sapAuthPayload, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -45,6 +46,15 @@ router.get('/auth/:customerId', async (req, res) => {
         'Cookie': `B1SESSION=${sessionId};`, // Use the session ID in the Cookie header
       },
     });
+    Summary
+
+    // Step 3: Extract the desired data using the provided email
+    const customer = sapResponse.data;
+    const contactEmployee = customer.ContactEmployees.find(emp => emp.E_Mail === customerEmail); // Use customerEmail from the query parameter
+
+    if (!contactEmployee) {
+      throw new Error('Contact employee not found');
+    }
 
     // Prepare the JWT options and payload for Zendesk
     const jwtOptions = {
@@ -52,15 +62,14 @@ router.get('/auth/:customerId', async (req, res) => {
       noTimestamp: true, // prevents iat in payload      
     };
 
-    const customer = sapResponse.data;
     const jwtPayload = {
       scope: "user",
-      name: `${customer.CardName}`, // Assuming the CardName is the full name
-      email: customer.ContactEmployees[0]?.E_Mail, // Assuming the first contact's email
-      external_id: customerId, // Use the customerId as the external ID
-      phone: customer.ContactEmployees[0]?.Phone1, // Assuming the first contact's phone
+      name: `${contactEmployee.Name}`, // Using the Name from the ContactEmployees object
+      email: contactEmployee.E_Mail, // Email from the specific contact
+      external_id: contactEmployee.U_ContactId, // Assuming U_ContactId is the desired external ID
+      phone: contactEmployee.Phone1, // Assuming the first contact's phone
       company_name: customer.CardName, // Assuming CardName is the company name
-    };
+    }; 
 
     const token = jwt.sign(jwtPayload, zendeskJwtSecret, jwtOptions);
 
