@@ -19,8 +19,6 @@ router.get('/hello', (req, res) => {
   res.send('Hello, World!');
 });
 
-console.log('SAP Auth Payload:', sapAuthPayload);
-
 router.get('/auth/:customerId', async (req, res) => {
   const customerId = req.params.customerId;
   const customerEmail = req.query.email; // Extract the email from the query parameter

@@ -1,4 +1,4 @@
-const express = require('express'); //delete after fixing ssl
+const express = require('express');
 const app = express();
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -36,6 +36,8 @@ router.get('/auth/:customerId', async (req, res) => {
       Password: sapPassword,
       CompanyDB: sapCompanyDB,
     };
+
+    console.log('SAP Auth Payload:', sapAuthPayload);
 
     const sapAuthResponse = await axios.post(`https://${servicelayerurl}:50000/b1s/v1/Login`, sapAuthPayload, {
       httpsAgent: agent, // Use the HTTPS agent with disabled certificate verification
