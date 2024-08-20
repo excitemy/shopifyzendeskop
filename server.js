@@ -9,16 +9,11 @@ const appguRouter = require('./appgu');
 const shopifyurl = process.env.SHOPIFY_URL;
 
 app.use(cors({
-  origin: (process.env.CORS_ORIGINS || '').split(','),
+  origin: `https://${shopifyurl}`, // Directly use the Shopify URL
   methods: ['GET'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', `https://${shopifyurl}`);
-  next();
-});
 
 app.use('/appem', appemRouter);
 app.use('/appsso', appssoRouter);
