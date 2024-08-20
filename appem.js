@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); //delete after fixing ssl
 const app = express();
 const router = express.Router();
 const jwt = require('jsonwebtoken');
