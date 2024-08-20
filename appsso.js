@@ -9,10 +9,9 @@ const url = require('url');
 
 const zendeskSubDomain = process.env.ZENDESK_SUB_DOMAIN;
 const sharedKey = process.env.ZENDESK_JWT_SSOSECRET;
-const sapUserName = process.env.SAP_USER_NAME;
-const sapPassword = process.env.SAP_PASSWORD;
-const sapCompanyDB = process.env.SAP_COMPANY_DB;
-const servicelayerurl = process.env.ServiceLayer_URL;
+const shopifyAccessToken = process.env.SHOPIFY_ACCESS_TOKEN;
+const shopifyurl = process.env.SHOPIFY_URL;
+
 
 router.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', `https://${shopifyurl}`);
@@ -26,6 +25,7 @@ router.use(cors({
   credentials: true
 }));
 
+
 router.get('/hello', (req, res) => {
   res.send('Hello, World!');
 });
@@ -34,41 +34,25 @@ router.get('/auth/:customerId', async (req, res) => {
   const customerId = req.params.customerId;
 
   try {
-    // Step 1: Authenticate with SAP Business One Service Layer
-    const sapAuthPayload = {
-      UserName: sapUserName,
-      Password: sapPassword,
-      CompanyDB: sapCompanyDB,
-    };
-
-    const sapAuthResponse = await axios.post(`https://${servicelayerurl}:50000/b1s/v1/Login`, sapAuthPayload, {
+    const shopifyResponse = await axios.get(`https://${shopifyurl}/admin/customers/${customerId}.json`, {
       headers: {
+        'X-Shopify-Access-Token': shopifyAccessToken,
         'Content-Type': 'application/json',
       },
     });
 
-    const sessionId = sapAuthResponse.data.SessionId; // Extract the SessionId from the response
-
-    // Step 2: Make an authenticated request to SAP Business One Service Layer
-    const sapResponse = await axios.get(`https://${servicelayerurl}:50000/b1s/v1/BusinessPartners('${customerId}')?$select=CardCode,CardName,ContactEmployees`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': `B1SESSION=${sessionId};`, // Use the session ID in the Cookie header
-      },
-    });
-
-    const customer = sapResponse.data;
+    const customer = shopifyResponse.data.customer;
     const jwtPayload = {  
-      name: `${customer.CardName}`, // Assuming CardName is the full name
-      email: customer.ContactEmployees[0]?.E_Mail, // Assuming the first contact's email
-      phone: customer.ContactEmployees[0]?.Phone1, // Assuming the first contact's phone
-      company_name: customer.CardName, // Assuming CardName is the company name
+      name: `${customer.first_name} ${customer.last_name}`,
+      email: customer.email,
+      phone: customer.phone,
+      company_name: customer.company,
       iat: Math.floor(Date.now() / 1000),
       jti: uuid.v4(),
-      external_id: customerId, // Use the customerId as the external ID
+      external_id: customer.id.toString(), // Convert the customer.id to a string
     };
 
-    // Encode the JWT
+    // encode the JWT
     const token = jwt.sign(jwtPayload, sharedKey, {
       algorithm: 'HS256',
     });

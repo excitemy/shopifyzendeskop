@@ -5,14 +5,13 @@
 <script type="text/javascript">
   console.log("User Logged In");
 
-  var customerId = [CustomerID];
-  var customerEmail = [ShopaccountEmail];
-  var WebAppName = "sanazendesk"; // !!!Replace with your main web app name!!!
+  var customerId = {{ customer.id }};
+  var WebAppName = "shopifyzendesk"; // !!!Replace with your main web app name!!!
 
   // Fetch Zendesk JWT token for the current user
   async function fetchZendeskJWT() {
     try {
-      const response = await fetch('https://' + WebAppName + '.azurewebsites.net/appem/auth/' + customerId + '?email=' + encodeURIComponent(customerEmail));
+      const response = await fetch('https://' + WebAppName + '.azurewebsites.net/appem/auth/' + customerId);
       if (!response.ok) {
         throw new Error(`Failed to fetch JWT: ${response.statusText}`);
       }
@@ -56,4 +55,3 @@
 </script>
 {% endif %}
 <!-----------ZENDESK End User Auth App------->
-
